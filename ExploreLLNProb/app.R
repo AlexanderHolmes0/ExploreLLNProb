@@ -241,8 +241,8 @@ server <- function(input, output) {
 
     ggplotly(isolate(observed_dice()) |>
       filter(name %in% input$dicenum) |>
-      ggplot(aes(count - (roll_num / 6))) +
-      geom_histogram(binwidth = 1) +
+      ggplot(aes((1 / 6)-estimated_probability )) +
+      geom_histogram(binwidth = .0001) +
       labs(x = "Count - n/6"))
     # mutate(y = count - roll_num) |>
     # ggplot(aes(roll_num, y, color = name)) +
