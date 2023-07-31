@@ -62,9 +62,10 @@ ui <- fluidPage(
             plotlyOutput("distPlot"),
             tabsetPanel(
               tabPanel("Counts - n/2", plotlyOutput("Hcounts",height='350px')),
-              tabPanel("Actual Count Difference", plotlyOutput("Tcounts",height='350px'))
+              tabPanel("Actual Count Difference", plotlyOutput("Tcounts",height='350px')),
+              tabPanel("Actual Difference Distribution", plotlyOutput("FCounts",height='350px')
             )
-        ),
+        )),
         tabPanel(
           "Dice Example",
           plotlyOutput("dicePlot"),
@@ -81,6 +82,7 @@ ui <- fluidPage(
     )
   )
 )
+
 
 
 
@@ -180,6 +182,18 @@ server <- function(input, output) {
       theme_bw() +
       scale_color_manual("Event", values = c("Heads-Tails" = "#FF7276", "Tails-Heads" = "lightblue")) +
       scale_x_log10())
+  })
+
+  output$FCounts <- renderPlotly({
+    req(input$trials)
+    
+    total_observed <- cumsum(observed_coin()$event)
+    estimated_probability <- total_observed / 1:input$trials
+    
+    ggplotly(isolate(observed_coin()) |>
+               ggplot(aes((1 / 2)-estimated_probability )) +
+               geom_histogram(binwidth = .0001) +
+               labs(x = "0.5 - estimated_probability"))
   })
 
 
